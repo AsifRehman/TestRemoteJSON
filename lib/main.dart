@@ -1,39 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-Future<List<Album>> fetchAlbum() async {
-  final response =
-      await http.get('https://jsonplaceholder.typicode.com/albums');
-
-  if (response.statusCode == 200) {
-    Iterable list = json.decode(response.body);
-    return list.map((album) => Album.fromJson(album)).toList();
-    //return list.map((e) => Album.fromJson(json.decode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
-  }
-}
-
-class Album {
-  final int userId;
-  final int id;
-  final String title;
-
-  Album({this.userId, this.id, this.title});
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-    );
-  }
-}
 
 void main() => runApp(MyApp());
 
@@ -45,43 +10,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<List<Album>> futureAlbum;
-
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum();
-  }
-
-  Widget albumWidget() {
-    return FutureBuilder(
-      builder: (context, snapShot) {
-        if (snapShot.connectionState == ConnectionState.done) {
-          if (snapShot.hasError) {
-            return Center(
-              child: Text("SomeThing went wrong."),
-            );
-          }
-          return ListView.builder(
-            itemCount: snapShot.data.length,
-            itemBuilder: (context, index) {
-              Album project = snapShot.data[index];
-              return Column(
-                children: <Widget>[
-                  // Widget to display the list of project
-                  ListTile(
-                    title: Text(project.title),
-                  )
-                ],
-              );
-            },
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-      future: futureAlbum,
-    );
   }
 
   @override
@@ -92,13 +23,132 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Fetch Data Example 1'),
-        ),
-        body: Center(
-          child: albumWidget(),
-        ),
-      ),
+          appBar: AppBar(
+            title: Text('Fetch Data Example 1'),
+          ),
+          body: homeScreen()),
     );
   }
+}
+
+Widget homeScreen() {
+  return Stack(children: <Widget>[
+    _buildBackground(),
+    _buildBalance(),
+    _buildProfile(),
+    _buildRechargeBtn(),
+    Positioned(
+      top: 1,
+      height: 100,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        margin: EdgeInsets.all(10.0),
+      ),
+    )
+  ]);
+}
+
+Widget _buildBackground() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+      Expanded(
+        flex: 1,
+        child: Container(
+          color: Colors.black,
+        ),
+      ),
+      Expanded(
+        flex: 2,
+        child: Container(
+          color: Colors.green,
+        ),
+      )
+    ],
+  );
+}
+
+Widget _buildBalance() {
+  TextStyle kTextStyle = TextStyle(color: Colors.white);
+
+  return Positioned(
+    top: 30,
+    left: 15,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Your Balance is",
+          style: kTextStyle,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Rs",
+              style: kTextStyle,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "2000.02",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25.0,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildProfile() {
+  TextStyle kTextStyle = TextStyle(color: Colors.white);
+
+  return Positioned(
+    top: 30,
+    right: 15,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Asif Rehman",
+          style: kTextStyle,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "0333 9933886",
+              style: kTextStyle,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildRechargeBtn() {
+  return Positioned(
+    top: 80.0,
+    left: 10.0,
+    right: 10.0,
+    child: RaisedButton(
+      color: Colors.yellow[700],
+      child: Text("Tap To Recharge"),
+      onPressed: () {
+        print('button');
+      },
+    ),
+  );
 }
