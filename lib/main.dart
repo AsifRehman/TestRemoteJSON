@@ -9,8 +9,6 @@ Future<List<Album>> fetchAlbum() async {
       await http.get('https://jsonplaceholder.typicode.com/albums');
 
   if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
     Iterable list = json.decode(response.body);
     return list.map((album) => Album.fromJson(album)).toList();
     //return list.map((e) => Album.fromJson(json.decode(response.body));
@@ -57,30 +55,32 @@ class _MyAppState extends State<MyApp> {
 
   Widget albumWidget() {
     return FutureBuilder(
-      builder: (context, projectSnap) {
-        if (projectSnap.connectionState == ConnectionState.none &&
-            projectSnap.hasData == null) {
-          //print('project snapshot data is: ${projectSnap.data}');
-          return Container(
-            child: Text("no data"),
-          );
-        }
-        return ListView.builder(
-          itemCount: projectSnap.data.length,
-          itemBuilder: (context, index) {
-            Album project = projectSnap.data[index];
-            return Column(
-              children: <Widget>[
-                // Widget to display the list of project
-                ListTile(
-                  title: Text(project.title),
-                )
-              ],
+      builder: (context, snapShot) {
+        if (snapShot.connectionState == ConnectionState.done) {
+          if (snapShot.hasError) {
+            return Center(
+              child: Text("SomeThing went wrong."),
             );
-          },
-        );
+          }
+          return ListView.builder(
+            itemCount: snapShot.data.length,
+            itemBuilder: (context, index) {
+              Album project = snapShot.data[index];
+              return Column(
+                children: <Widget>[
+                  // Widget to display the list of project
+                  ListTile(
+                    title: Text(project.title),
+                  )
+                ],
+              );
+            },
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
       },
-      future: fetchAlbum(),
+      future: futureAlbum,
     );
   }
 
