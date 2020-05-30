@@ -3,12 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:testremotejson/model/party_model.dart';
 
 Future<List<Party>> fetchParty() async {
   final String url =
       'https://brtapi.azurewebsites.net/odata/tbl_Party?\$select=PartyNameID,PartyName,PartyTypeID';
-
-  print(url);
 
   final response = await http.get(url);
 
@@ -17,22 +16,6 @@ Future<List<Party>> fetchParty() async {
     return list.map((party) => Party.fromJson(party)).toList();
   } else {
     throw Exception('Failed to load parties');
-  }
-}
-
-class Party {
-  final int partyID;
-  final String partyName;
-  final int partyTypeID;
-
-  Party({this.partyID, this.partyName, this.partyTypeID});
-
-  factory Party.fromJson(Map<String, dynamic> json) {
-    return Party(
-      partyID: json['PartyNameID'],
-      partyName: json['PartyName'],
-      partyTypeID: json['PartyTypeID'],
-    );
   }
 }
 
@@ -64,6 +47,7 @@ class _MyAppState extends State<MyApp> {
             );
           }
           return ListView.builder(
+            shrinkWrap: true,
             itemCount: snapShot.data.length,
             itemBuilder: (context, index) {
               Party snap = snapShot.data[index];
@@ -88,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Fetch Data Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -96,7 +81,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Parties List'),
         ),
-        body: Center(
+        body: Container(
           child: albumWidget(),
         ),
       ),
