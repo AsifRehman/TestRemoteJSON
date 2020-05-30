@@ -4,33 +4,34 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Album>> fetchAlbum() async {
-  final response =
-      await http.get('https://jsonplaceholder.typicode.com/albums');
+Future<List<Party>> fetchParty() async {
+  final String url =
+      'https://brtapi.azurewebsites.net/odata/tbl_Party?\$select=PartyNameID,PartyName,PartyTypeID';
+
+  print(url);
+
+  final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    Iterable list = json.decode(response.body);
-    return list.map((album) => Album.fromJson(album)).toList();
-    //return list.map((e) => Album.fromJson(json.decode(response.body));
+    Iterable list = json.decode(response.body)["value"];
+    return list.map((party) => Party.fromJson(party)).toList();
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
+    throw Exception('Failed to load parties');
   }
 }
 
-class Album {
-  final int userId;
-  final int id;
-  final String title;
+class Party {
+  final int partyID;
+  final String partyName;
+  final int partyTypeID;
 
-  Album({this.userId, this.id, this.title});
+  Party({this.partyID, this.partyName, this.partyTypeID});
 
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
+  factory Party.fromJson(Map<String, dynamic> json) {
+    return Party(
+      partyID: json['PartyNameID'],
+      partyName: json['PartyName'],
+      partyTypeID: json['PartyTypeID'],
     );
   }
 }
@@ -45,12 +46,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<List<Album>> futureAlbum;
+  Future<List<Party>> futureParty;
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum();
+    futureParty = fetchParty();
   }
 
   Widget albumWidget() {
@@ -65,12 +66,12 @@ class _MyAppState extends State<MyApp> {
           return ListView.builder(
             itemCount: snapShot.data.length,
             itemBuilder: (context, index) {
-              Album project = snapShot.data[index];
+              Party snap = snapShot.data[index];
               return Column(
                 children: <Widget>[
                   // Widget to display the list of project
                   ListTile(
-                    title: Text(project.title),
+                    title: Text(snap.partyName),
                   )
                 ],
               );
@@ -80,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           return CircularProgressIndicator();
         }
       },
-      future: futureAlbum,
+      future: futureParty,
     );
   }
 
@@ -93,7 +94,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Fetch Data Example 1'),
+          title: Text('Parties List'),
         ),
         body: Center(
           child: albumWidget(),
