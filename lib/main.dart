@@ -1,8 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:testremotejson/routs.dart';
-import 'package:testremotejson/screen/partylist/party_list.dart';
+import 'package:testremotejson/screens/partylist/party_list.dart';
 
 void main() => runApp(MaterialApp(
       routes: Routes.getRoutes(),

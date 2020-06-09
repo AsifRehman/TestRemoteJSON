@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:testremotejson/screen/PartyDetail/party_detail.dart';
-import 'package:testremotejson/screen/partyList/party_list.dart';
+import 'package:testremotejson/screens/PartyDetail/party_detail.dart';
+import 'package:testremotejson/screens/partyList/party_list.dart';
 
 class Routes {
   // Route name constants

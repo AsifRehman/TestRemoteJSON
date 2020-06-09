@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:testremotejson/model/party_model.dart';
-import 'package:testremotejson/screen/PartyDetail/party_detail.dart';
+import 'package:testremotejson/screens/PartyDetail/party_detail.dart';
 
 class PartyList extends StatefulWidget {
   static const String id = "partylist";
@@ -38,6 +38,13 @@ class _PartyListState extends State<PartyList> {
                 children: <Widget>[
                   // Widget to display the list of project
                   ListTile(
+                    onTap: () {
+                      Navigator.pushNamed(context, PartyDetail.id,
+                          arguments: Party(
+                              partyID: snap.partyID,
+                              partyName: snap.partyName,
+                              partyTypeID: snap.partyTypeID));
+                    },
                     title: Text(snap.partyName),
                   )
                 ],
