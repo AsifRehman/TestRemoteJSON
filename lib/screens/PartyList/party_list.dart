@@ -40,10 +40,7 @@ class _PartyListState extends State<PartyList> {
                   ListTile(
                     onTap: () {
                       Navigator.pushNamed(context, PartyDetail.id,
-                          arguments: Party(
-                              partyID: snap.partyID,
-                              partyName: snap.partyName,
-                              partyTypeID: snap.partyTypeID));
+                          arguments: snap);
                     },
                     title: Text(snap.partyName),
                   )
